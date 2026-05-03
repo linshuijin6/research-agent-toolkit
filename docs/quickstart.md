@@ -105,13 +105,16 @@ SMTP_FROM
 
 Keep SMTP delivery disabled until the dry-run looks correct.
 
+**Warning:** `rat send-test-email` sends a real email immediately. It does **not** honor `email.enabled: false` or `safety.dry_run: true`.
+
 Use these rules when you are ready to test email delivery:
 
 - leave `email.enabled: false` during initial setup;
 - keep `safety.dry_run: true` until you have reviewed the generated output;
 - store all SMTP credentials as secrets, not in `config.yaml`;
+- change `email.recipient` from the example value to an address you control before running `rat send-test-email`;
 - verify the recipient, sender, and subject prefix before enabling delivery;
-- use the test command only after the configuration is validated.
+- use `rat send-test-email` only after the configuration is validated and only when you intend to send a real test message.
 
 ## Acceptance criteria
 
