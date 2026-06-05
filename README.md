@@ -4,71 +4,70 @@
 [![Literature Monitor](https://github.com/linshuijin6/research-agent-toolkit/actions/workflows/literature-monitor.yml/badge.svg)](https://github.com/linshuijin6/research-agent-toolkit/actions/workflows/literature-monitor.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 
-**Research Agent Toolkit** turns a private research assistant workflow into an open, reproducible, GitHub Actions based literature-monitoring system.
+**Research Agent Toolkit** is a small Python toolkit for scheduled literature and model-update monitoring with GitHub Actions.
 
-It is designed for researchers who want scheduled AI literature digests without depending on paid agent platforms.
+The first preset comes from a PET/MRI research workflow: weekly monitoring for MRI-to-PET, Tau PET, Alzheimer's disease, medical vision-language models, medical CLIP-style models, GitHub releases, and Hugging Face model cards.
 
-> v1.0 focuses on one production-ready workflow: **weekly literature and model-update monitoring for MRI-to-PET, Tau PET, Alzheimer's disease, medical vision-language models, medical CLIP-style models, GitHub releases, and Hugging Face model cards.**
+The v1.0 scope is deliberately narrow: make one weekly monitoring workflow reproducible before adding broader presets or dashboard features.
 
 简体中文说明见 [README.zh-CN.md](README.zh-CN.md).
 
 ---
 
-## What you get
+## Current scope
 
 | Capability | v1.0 status |
 |---|---:|
-| Scheduled literature monitoring | Yes |
-| NeuroPET / MRI-to-PET / Tau PET / AD preset | Yes |
-| Medical VLM / medical CLIP / foundation-model preset | Yes |
-| GitHub Actions automation | Yes |
-| Chinese weekly email report | Yes |
-| OpenAI-compatible LLM backend | Yes |
-| SMTP email delivery | Yes, disabled by default |
-| Gmail API sender | Experimental |
+| Scheduled literature monitoring | Supported |
+| NeuroPET / MRI-to-PET / Tau PET / AD preset | Supported |
+| Medical VLM / medical CLIP / foundation-model preset | Supported |
+| GitHub Actions automation | Supported |
+| Chinese weekly report | Supported |
+| Model-assisted report writing | Supported |
+| Optional report delivery | Supported, off by default |
 | Notion workflow | Planned, not in v1.0 |
 
-See the [v1.0 completeness audit](docs/completeness-audit.zh-CN.md) for the exact release boundary and the [architecture note](docs/architecture.md) for the workflow design.
+See the [v1.0 completeness audit](docs/completeness-audit.zh-CN.md), [architecture note](docs/architecture.md), and [release checklist](docs/release-checklist.md).
 
 ---
 
-## Why this project exists
+## Background
 
-Many researchers already use private AI agents to monitor papers, summarize updates, and send weekly reports. Most students and labs, however, do not have access to paid agent platforms. This repository makes that workflow forkable, inspectable, and cheaper to run.
+This repository started from a practical research need: checking new PET/MRI papers, medical imaging model releases, and related code updates every week, then writing an auditable report from the retrieved metadata.
 
-The toolkit is especially useful for:
+The toolkit is most useful for:
 
 - biomedical engineering students;
 - medical imaging researchers;
 - PET (Positron Emission Tomography) / MRI (Magnetic Resonance Imaging) researchers;
 - AI-for-science users who want scheduled literature digests;
-- open-source maintainers who prefer transparent automation over black-box agents.
+- maintainers who prefer inspectable automation over opaque end-to-end agents.
 
 ---
 
 ## Maintainer needs
 
-This project is actively maintained as open-source research infrastructure. The highest-value maintenance work includes:
+The main maintenance work is ordinary research software work:
 
-- generating and reviewing tests for source connectors, ranking, verification, and delivery modules;
-- reviewing GitHub Actions workflows for reliability, security, and reproducibility;
-- hardening configuration validation so new users can run the toolkit safely;
-- improving documentation, examples, and onboarding material for students and labs;
-- adding new research-topic presets beyond biomedical imaging;
-- preparing releases with changelogs, migration notes, and reproducibility checks;
-- auditing outputs to prevent hallucinated paper titles, DOI values, code links, licenses, model weights, or datasets.
+- add tests for source connectors, ranking, verification, and delivery modules;
+- review GitHub Actions workflows for reliability and reproducibility;
+- improve configuration validation so new users can diagnose setup errors;
+- keep examples and documentation aligned with the code;
+- add research-topic presets beyond biomedical imaging;
+- prepare releases with notes and known limitations;
+- audit report outputs so factual fields are supported by retrieved metadata.
 
 ---
 
-## Downstream research use cases
+## Related research repositories
 
-The toolkit is used alongside related public PET/MRI and MRI-to-PET research repositories, including:
+The toolkit is used alongside public PET/MRI and MRI-to-PET research repositories, including:
 
 - [`replicaLT`](https://github.com/linshuijin6/replicaLT): plasma-guided 3D MRI-to-PET generation;
 - [`MRI2PET`](https://github.com/linshuijin6/MRI2PET): MRI-to-PET research experiments;
 - [`ADNI_dataprocess`](https://github.com/linshuijin6/ADNI_dataprocess): data processing utilities for ADNI-style neuroimaging workflows.
 
-These repositories provide real downstream scenarios for weekly literature monitoring, model-update tracking, experiment reporting, documentation maintenance, and reproducible biomedical AI research workflows.
+These repositories provide downstream scenarios for weekly literature monitoring, model-update tracking, experiment reporting, documentation maintenance, and reproducible biomedical AI research workflows.
 
 ---
 
@@ -77,19 +76,19 @@ These repositories provide real downstream scenarios for weekly literature monit
 ```mermaid
 flowchart LR
     A[GitHub Actions schedule] --> B[Search sources]
-    B --> C[Verify title, date, and link]
+    B --> C[Check title, date, and link]
     C --> D[Deduplicate]
     D --> E[Rank by relevance and reproducibility]
-    E --> F[Generate Chinese weekly email]
+    E --> F[Generate Chinese weekly report]
     F --> G[Write Markdown and JSON artifacts]
-    F --> H[Optional SMTP or Gmail delivery]
+    F --> H[Optional delivery]
 ```
 
 Default search flow:
 
 1. Search the latest 7 days.
 2. If strong results are insufficient, extend to 30 days.
-3. Verify metadata before inclusion.
+3. Check metadata before inclusion.
 4. Keep at most 5 strong results per module and 3 indirect results.
 5. Produce Markdown and JSON artifacts for every run.
 
@@ -101,31 +100,17 @@ For implementation details, see [docs/architecture.md](docs/architecture.md).
 
 ### Module A: NeuroPET / MRI-to-PET / Tau PET / AD
 
-Default topics include:
-
-- MRI-to-PET synthesis;
-- pseudo-PET generation;
-- Tau PET prediction and analysis;
-- amyloid PET and FDG PET;
-- PET reconstruction;
-- multimodal neuroimaging for Alzheimer's disease;
-- deep learning methods involving PET and MRI.
+Default topics include MRI-to-PET synthesis, pseudo-PET generation, Tau PET, amyloid PET, FDG PET, PET reconstruction, multimodal neuroimaging, and deep learning methods involving PET and MRI.
 
 ### Module B: Medical VLM / medical CLIP / foundation-model updates
 
-Default topics include:
-
-- medical vision-language models;
-- biomedical CLIP-style models;
-- radiology foundation models;
-- GitHub repositories and releases;
-- Hugging Face models, datasets, model cards, and dataset cards.
+Default topics include medical vision-language models, biomedical CLIP-style models, radiology foundation models, GitHub repositories and releases, and Hugging Face model or dataset cards.
 
 ---
 
 ## Example output
 
-The generated Chinese weekly email always uses six sections:
+The generated Chinese weekly report uses six sections:
 
 1. 本周期最重要结论
 2. MRI-to-PET / Tau PET / Alzheimer's disease 强相关论文
@@ -134,7 +119,7 @@ The generated Chinese weekly email always uses six sections:
 5. 未纳入内容与原因
 6. 下周建议关注关键词
 
-A demo report is available at [docs/demo-email.zh-CN.md](docs/demo-email.zh-CN.md).
+A sanitized demo report is available at [docs/demo-email.zh-CN.md](docs/demo-email.zh-CN.md).
 
 ---
 
@@ -150,20 +135,9 @@ rat validate-config --config config.yaml
 rat literature-monitor --config config.yaml --dry-run
 ```
 
-Generated files are written to:
+Generated files are written to `outputs/YYYY-MM-DD/`.
 
-```text
-outputs/YYYY-MM-DD/
-```
-
-Typical outputs:
-
-```text
-email_zh.md
-report.json
-candidates.json
-excluded.json
-```
+Typical outputs are `email_zh.md`, `report.json`, `candidates.json`, and `excluded.json`.
 
 For a more detailed Chinese setup guide, see [docs/quickstart.zh-CN.md](docs/quickstart.zh-CN.md).
 
@@ -171,48 +145,9 @@ For a more detailed Chinese setup guide, see [docs/quickstart.zh-CN.md](docs/qui
 
 ## Configuration
 
-Minimal LLM settings:
+Copy `config.example.yaml` to `config.yaml`, then adjust topics, source settings, model endpoint settings, and optional delivery settings for your environment.
 
-```yaml
-llm:
-  provider: openai_compatible
-  base_url_env: LLM_BASE_URL
-  api_key_env: LLM_API_KEY
-  model_env: LLM_MODEL
-```
-
-Example DeepSeek secrets:
-
-```text
-LLM_BASE_URL=https://api.deepseek.com
-LLM_API_KEY=your_api_key
-LLM_MODEL=deepseek-chat
-```
-
-Example OpenAI secrets:
-
-```text
-LLM_BASE_URL=https://api.openai.com/v1
-LLM_API_KEY=your_api_key
-LLM_MODEL=gpt-4o
-```
-
-Recommended GitHub Actions secrets:
-
-```text
-LLM_BASE_URL
-LLM_API_KEY
-LLM_MODEL
-SEMANTIC_SCHOLAR_API_KEY
-HUGGINGFACE_TOKEN
-SMTP_HOST
-SMTP_PORT
-SMTP_USERNAME
-SMTP_PASSWORD
-SMTP_FROM
-```
-
-`GITHUB_TOKEN` is automatically available in GitHub Actions.
+By default, the workflow runs in dry-run mode and only writes local artifacts.
 
 ---
 
@@ -227,7 +162,7 @@ on:
   workflow_dispatch:
 ```
 
-The workflow runs in dry-run mode by default, uploads artifacts, and does not send email unless you explicitly enable delivery.
+The workflow uploads artifacts and does not send reports unless delivery is explicitly enabled.
 
 ---
 
@@ -249,21 +184,19 @@ Where `R` is relevance, `N` is novelty, `C` is clinical or research value, `P` i
 
 ---
 
-## Safety principles
+## Safety and data handling
 
-- No API key is committed to the repository.
-- No email password is committed to the repository.
 - Dry-run is enabled by default.
 - Source verification is required by default.
 - v1.0 does not read or write Notion.
-- The workflow does not scrape paid full text or bypass website restrictions.
-- The LLM is not allowed to invent paper titles, DOI values, code links, licenses, weights, or datasets.
+- The workflow only uses retrieved candidate metadata for report generation.
+- Factual fields such as paper titles, DOI values, code links, licenses, model weights, and datasets should be supported by retrieved metadata.
 
 ---
 
 ## Roadmap
 
-- v1.1: Gmail draft mode improvements.
+- v1.1: draft review mode improvements.
 - v1.2: MCP (Model Context Protocol) adapter.
 - v1.3: Notion daily summary workflow.
 - v1.4: Web dashboard.
