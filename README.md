@@ -28,7 +28,7 @@ It is designed for researchers who want scheduled AI literature digests without 
 | Gmail API sender | Experimental |
 | Notion workflow | Planned, not in v1.0 |
 
-See the [v1.0 completeness audit](docs/completeness-audit.zh-CN.md) for the exact release boundary.
+See the [v1.0 completeness audit](docs/completeness-audit.zh-CN.md) for the exact release boundary and the [architecture note](docs/architecture.md) for the workflow design.
 
 ---
 
@@ -43,6 +43,32 @@ The toolkit is especially useful for:
 - PET (Positron Emission Tomography) / MRI (Magnetic Resonance Imaging) researchers;
 - AI-for-science users who want scheduled literature digests;
 - open-source maintainers who prefer transparent automation over black-box agents.
+
+---
+
+## Maintainer needs
+
+This project is actively maintained as open-source research infrastructure. The highest-value maintenance work includes:
+
+- generating and reviewing tests for source connectors, ranking, verification, and delivery modules;
+- reviewing GitHub Actions workflows for reliability, security, and reproducibility;
+- hardening configuration validation so new users can run the toolkit safely;
+- improving documentation, examples, and onboarding material for students and labs;
+- adding new research-topic presets beyond biomedical imaging;
+- preparing releases with changelogs, migration notes, and reproducibility checks;
+- auditing outputs to prevent hallucinated paper titles, DOI values, code links, licenses, model weights, or datasets.
+
+---
+
+## Downstream research use cases
+
+The toolkit is used alongside related public PET/MRI and MRI-to-PET research repositories, including:
+
+- [`replicaLT`](https://github.com/linshuijin6/replicaLT): plasma-guided 3D MRI-to-PET generation;
+- [`MRI2PET`](https://github.com/linshuijin6/MRI2PET): MRI-to-PET research experiments;
+- [`ADNI_dataprocess`](https://github.com/linshuijin6/ADNI_dataprocess): data processing utilities for ADNI-style neuroimaging workflows.
+
+These repositories provide real downstream scenarios for weekly literature monitoring, model-update tracking, experiment reporting, documentation maintenance, and reproducible biomedical AI research workflows.
 
 ---
 
@@ -66,6 +92,8 @@ Default search flow:
 3. Verify metadata before inclusion.
 4. Keep at most 5 strong results per module and 3 indirect results.
 5. Produce Markdown and JSON artifacts for every run.
+
+For implementation details, see [docs/architecture.md](docs/architecture.md).
 
 ---
 
@@ -240,6 +268,8 @@ Where `R` is relevance, `N` is novelty, `C` is clinical or research value, `P` i
 - v1.3: Notion daily summary workflow.
 - v1.4: Web dashboard.
 - v1.5: More research-topic presets beyond biomedical imaging.
+
+Open roadmap issues track release preparation, source verification, MCP integration, preset expansion, and dashboard work.
 
 ---
 
