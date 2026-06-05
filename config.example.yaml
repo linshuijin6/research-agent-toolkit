@@ -82,7 +82,7 @@ llm:
 email:
   enabled: false
   mode: smtp
-  recipient: 1170414294@qq.com
+  recipient: your_email@example.com
   subject_prefix: "[NeuroPET-MRI Weekly]"
   smtp:
     host_env: SMTP_HOST
