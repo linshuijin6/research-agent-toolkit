@@ -12,16 +12,42 @@ except Exception:  # pragma: no cover - fallback for minimal environments
     yaml = None
 
 DEFAULT_CONFIG: dict[str, Any] = {
-    "project": {"name": "research-agent-toolkit", "workflow": "literature-monitor", "language": "zh-CN", "timezone": "Asia/Shanghai"},
+    "project": {
+        "name": "research-agent-toolkit",
+        "workflow": "literature-monitor",
+        "language": "zh-CN",
+        "timezone": "Asia/Shanghai",
+    },
     "schedule": {"default_days": 7, "fallback_days": 30, "min_strong_results": 2},
     "topics": {
-        "neuro_pet": {"enabled": True, "max_strong_results": 5, "keywords": ["MRI-to-PET", "Tau PET", "Alzheimer's disease"]},
-        "medical_vlm": {"enabled": True, "max_strong_results": 5, "keywords": ["medical vision-language model", "medical CLIP"]},
+        "neuro_pet": {
+            "enabled": True,
+            "max_strong_results": 5,
+            "keywords": ["MRI-to-PET", "Tau PET", "Alzheimer's disease"],
+        },
+        "medical_vlm": {
+            "enabled": True,
+            "max_strong_results": 5,
+            "keywords": ["medical vision-language model", "medical CLIP"],
+        },
     },
     "sources": {},
     "llm": {"enabled": True, "provider": "openai_compatible", "temperature": 0.2, "max_tokens": 6000},
-    "email": {"enabled": False, "mode": "smtp", "recipient": "1170414294@qq.com", "subject_prefix": "[NeuroPET-MRI Weekly]"},
-    "safety": {"dry_run": True, "require_verified_title": True, "exclude_unverified_items": True, "allow_api_metadata_as_verified": True, "request_timeout_seconds": 20, "max_items_per_module": 5, "max_indirect_items": 3},
+    "email": {
+        "enabled": False,
+        "mode": "smtp",
+        "recipient": "your_email@example.com",
+        "subject_prefix": "[NeuroPET-MRI Weekly]",
+    },
+    "safety": {
+        "dry_run": True,
+        "require_verified_title": True,
+        "exclude_unverified_items": True,
+        "allow_api_metadata_as_verified": True,
+        "request_timeout_seconds": 20,
+        "max_items_per_module": 5,
+        "max_indirect_items": 3,
+    },
     "state": {"enabled": True, "path": "data/history.json"},
     "outputs": {"dir": "outputs"},
 }
@@ -53,44 +79,31 @@ def _parse_scalar(value: str) -> Any:
 def _simple_yaml_load(text: str) -> dict[str, Any]:
     """Small fallback YAML reader for simple project configs.
 
-    It supports nested dictionaries, booleans, numbers, strings, inline lists,
-    and list items. PyYAML is still the recommended parser in normal use.
+    The full example config should be parsed with PyYAML. This fallback is kept
+    for tiny test configs and local bootstrap environments.
     """
     root: dict[str, Any] = {}
     stack: list[tuple[int, Any]] = [(-1, root)]
-    last_key_at_indent: dict[int, str] = {}
     for raw_line in text.splitlines():
-        if not raw_line.strip() or raw_line.lstrip().startswith("#"):
+        stripped = raw_line.strip()
+        if not stripped or raw_line.lstrip().startswith("#"):
             continue
         indent = len(raw_line) - len(raw_line.lstrip(" "))
-        line = raw_line.strip()
         while stack and indent <= stack[-1][0]:
             stack.pop()
         parent = stack[-1][1]
-        if line.startswith("- "):
-            value = _parse_scalar(line[2:])
-            if isinstance(parent, list):
-                parent.append(value)
+        if ":" not in stripped:
             continue
-        if ":" not in line:
-            continue
-        key, value = line.split(":", 1)
+        key, value = stripped.split(":", 1)
         key = key.strip()
         value = value.strip()
         if value == "":
-            node: dict[str, Any] | list[Any]
-            node = {}
+            node: dict[str, Any] = {}
             if isinstance(parent, dict):
                 parent[key] = node
-                last_key_at_indent[indent] = key
                 stack.append((indent, node))
-        else:
-            if isinstance(parent, dict):
-                parent[key] = _parse_scalar(value)
-    # second pass for common list blocks: key:\n  - item
-    lines = text.splitlines()
-    def assign_lists(node: dict[str, Any], prefix_indent: int = 0) -> None:
-        return None
+        elif isinstance(parent, dict):
+            parent[key] = _parse_scalar(value)
     return root
 
 
@@ -100,8 +113,6 @@ def _load_yaml_text(text: str) -> dict[str, Any]:
         if not isinstance(loaded, dict):
             raise ConfigError("Config root must be a mapping.")
         return loaded
-    # The fallback is intentionally conservative. It covers test and minimal configs.
-    # For full config.example.yaml, install PyYAML.
     return _simple_yaml_load(text)
 
 
