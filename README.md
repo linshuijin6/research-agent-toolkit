@@ -269,7 +269,7 @@ Where `R` is relevance, `N` is novelty, `C` is clinical or research value, `P` i
 - v1.4: Web dashboard.
 - v1.5: More research-topic presets beyond biomedical imaging.
 
-Open roadmap issues track release preparation, source verification, MCP integration, preset expansion, and dashboard work.
+See the [public roadmap](docs/roadmap.md) for release-readiness tasks and planned extension work.
 
 ---
 
